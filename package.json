@@ -18,5 +18,10 @@
   "bugs": {
     "url": "https://github.com/benangmerah/driver-meta-datagoid/issues"
   },
-  "homepage": "https://github.com/benangmerah/driver-meta-datagoid"
+  "homepage": "https://github.com/benangmerah/driver-meta-datagoid",
+  "dependencies": {
+    "ckan": "^0.2.1",
+    "async": "^0.9.0",
+    "request": "^2.38.0"
+  }
 }
