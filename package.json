@@ -1,0 +1,22 @@
+{
+  "name": "benangmerah-driver-meta-datagoid",
+  "version": "0.0.1",
+  "description": "BenangMerah meta-driver to add drivers for Data.go.id datasets.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/benangmerah/driver-meta-datagoid.git"
+  },
+  "keywords": [
+    "benangmerah"
+  ],
+  "author": "Andhika Nugraha (andhika.nugraha@outlook.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/benangmerah/driver-meta-datagoid/issues"
+  },
+  "homepage": "https://github.com/benangmerah/driver-meta-datagoid"
+}
