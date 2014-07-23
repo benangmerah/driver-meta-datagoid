@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/benangmerah/driver-meta-datagoid",
   "dependencies": {
+    "benangmerah-driver-base": "benangmerah/driver-base",
     "ckan": "^0.2.1",
     "async": "^0.9.0",
     "request": "^2.38.0"
