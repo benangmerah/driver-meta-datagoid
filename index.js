@@ -12,7 +12,9 @@ var OWL_NS = 'http://www.w3.org/2002/07/owl#';
 var XSD_NS = 'http://www.w3.org/2001/XMLSchema#';
 var BM_NS = 'http://benangmerah.net/ontology/';
 
-function DataGoIdMetaDriver() {}
+function DataGoIdMetaDriver() {
+  this.added = {};
+}
 util.inherits(DataGoIdMetaDriver, BmDriverBase);
 
 module.exports = DataGoIdMetaDriver;
@@ -38,9 +40,7 @@ DataGoIdMetaDriver.prototype.fetch = function() {
 
   self.client = new ckan.Client(self.options.ckanURL);
 
-  async.series([
-    self.listDatasets.bind(self)
-  ], function(err) {
+  self.listDatasets(function(err) {
     if (err) {
       return self.error(err);
     }
@@ -51,10 +51,21 @@ DataGoIdMetaDriver.prototype.fetch = function() {
 
 DataGoIdMetaDriver.prototype.listDatasets = function(callback) {
   var self = this;
+  self.searchDatasets('kode_provinsi', function(err) {
+    if (err) {
+      return callback(err);
+    }
+
+    self.searchDatasets('kode_kabkota', callback);
+  });
+};
+
+DataGoIdMetaDriver.prototype.searchDatasets = function(q, callback) {
+  var self = this;
 
   self.client.action(
     'package_search',
-    { q: 'kode_provinsi', rows: self.options.limit },
+    { q: q, rows: self.options.limit },
     function(err, data) {
       if (err) {
         return self.error(err);
@@ -74,6 +85,10 @@ DataGoIdMetaDriver.prototype.listDatasets = function(callback) {
 
 DataGoIdMetaDriver.prototype.processDataset = function(dataset, callback) {
   var self = this;
+
+  if (self.added[dataset.name]) {
+    return callback();
+  }
 
   var resource = dataset.resources[0];
   if (!resource || resource.format !== 'CSV') {
@@ -99,6 +114,7 @@ DataGoIdMetaDriver.prototype.processDataset = function(dataset, callback) {
       return callback();
     }
 
+    self.added[dataset.name] = true;
     self.addDataset(dataset);
 
     req.abort();
@@ -112,11 +128,11 @@ DataGoIdMetaDriver.prototype.addDataset = function(dataset) {
   var id = self.options.graphBase + dataset.name;
   var add = self.addTriple.bind(self, id);
 
-  add(RDF_NS+'type', BM_NS+'DriverInstance');
-  add(BM_NS+'enabled', '"true"^^<'+XSD_NS+'boolean>');
-  add(RDFS_NS+'label', '"'+self.options.titlePrefix+dataset.title+'"');
-  add(BM_NS+'driverName', '"'+self.options.driverName+'"');
-  add(BM_NS+'optionsYAML', '"datasetId: '+dataset.name+'"');
+  add(RDF_NS + 'type', BM_NS + 'DriverInstance');
+  add(BM_NS + 'enabled', '"true"^^<' + XSD_NS + 'boolean>');
+  add(RDFS_NS + 'label', '"' + self.options.titlePrefix + dataset.title + '"');
+  add(BM_NS + 'driverName', '"' + self.options.driverName + '"');
+  add(BM_NS + 'optionsYAML', '"datasetId: ' + dataset.name + '"');
 };
 
 BmDriverBase.handleCLI();
