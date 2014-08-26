@@ -83,6 +83,7 @@ DataGoIdMetaDriver.prototype.searchDatasets = function(q, callback) {
     });
 };
 
+var canUseRegex = /(^|,)"?'?(kode_provinsi|kode_kabkota)"?'?(,|$)/;
 DataGoIdMetaDriver.prototype.processDataset = function(dataset, callback) {
   var self = this;
 
@@ -106,8 +107,7 @@ DataGoIdMetaDriver.prototype.processDataset = function(dataset, callback) {
     data = data.toString();
     var stopAt = data.indexOf('\n');
     var header = data.substring(0, stopAt).trim();
-    var canUse =
-      !!header.match(/(^|,)"?'?(kode_provinsi|kode_kabkota)"?'?(,|$)/);
+    var canUse = canUseRegex.test(header);
 
     if (!canUse) {
       self.info('Cannot use dataset ' + dataset.name);
